@@ -18,6 +18,12 @@
 
 > 首次访问会带上 `?sharecode=...` 的访问口令，之后同一浏览器内直接点站内链接即可。
 
+### 文档网页版
+
+同一站点下还挂着这份 README 的网页版：**`/docs/`**
+（<https://fullstack-projects.app.workbuddy.host/docs/?sharecode=G66VMBWKQ5>）
+首页底部「项目文档」入口也指向它。页面由 `tools/build_docs.py` 从本文件生成，改完 README 重新生成即可。
+
 ## 技术栈
 
 - 前端：React 18 + TypeScript + Vite + Tailwind CSS + react-router-dom + axios + react-markdown
@@ -83,7 +89,8 @@ cd 01-blog/web      && APP_BASE=blog      npm run build
 cd 02-community/web && APP_BASE=community npm run build
 cd 03-shop/web      && APP_BASE=shop      npm run build
 
-# 2. 合成到 deploy/site
+# 2. 合成到 deploy/site（顺带把 README 渲染的文档页放进 /docs/）
+python tools/build_docs.py     # README.md -> docs-site/index.html
 python build_deploy.py
 
 # 3. 本地跑一遍

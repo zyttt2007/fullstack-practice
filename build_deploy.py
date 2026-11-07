@@ -159,6 +159,9 @@ app.disable('x-powered-by');
 app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
 app.get('/favicon.svg', (_req, res) => res.sendFile(path.join(__dirname, 'favicon.svg')));
 
+// 文档页：README 渲染成的静态页面（由 tools/build_docs.py 生成）
+app.use('/docs', express.static(path.join(__dirname, 'docs'), { extensions: ['html'] }));
+
 __MOUNTS__
 
 app.get('/health', (_req, res) => res.json({ ok: true, site: 'fullstack-practice' }));
@@ -325,6 +328,16 @@ def build_landing():
     font-size: 12.5px; color: #8a8377; line-height: 1.9;
   }}
   .note b {{ color: #5c574d; font-weight: 600; }}
+  .doclink {{
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    margin-top: 22px; padding: 16px 20px; text-decoration: none; color: inherit;
+    background: #fffdf9; border: 1px dashed #d8cfbd; border-radius: 12px;
+    transition: border-color .18s ease, background .18s ease;
+  }}
+  .doclink:hover {{ border-color: #b9ad95; background: #fffefb; }}
+  .doclink b {{ font-size: 14px; font-weight: 600; }}
+  .doclink .sub {{ font-size: 12.5px; color: #8a8377; }}
+  .doclink .go2 {{ margin-left: auto; font-size: 13px; font-weight: 600; color: #3f5d45; }}
   @media (max-width: 560px) {{ .wrap {{ padding: 46px 18px 64px; }} }}
 </style>
 </head>
@@ -338,6 +351,12 @@ def build_landing():
     </p>
     <div class="grid">{''.join(card_html)}
     </div>
+
+    <a class="doclink" href="/docs/">
+      <b>项目文档</b>
+      <span class="sub">技术栈 · 本地运行 · 目录结构 · 部署说明</span>
+      <span class="go2">阅读 →</span>
+    </a>
     <div class="note">
       <b>技术栈</b>：React 18 + TypeScript + Vite + Tailwind ｜ Node.js + Express ｜ MySQL / SQLite ｜ JWT + bcrypt<br />
       <b>账号</b>：每个项目的演示账号密码都是 <b>123456</b>，也可以直接注册新账号<br />
@@ -353,6 +372,7 @@ def main():
     # 只清掉生成的内容，保留 node_modules（Windows 上删它会因为文件占用失败）
     if os.path.isdir(OUT):
         shutil.rmtree(os.path.join(OUT, 'apps'), ignore_errors=True)
+        shutil.rmtree(os.path.join(OUT, 'docs'), ignore_errors=True)
         for name in ('server.js', 'landing.html', 'favicon.svg', 'package.json', '.gitignore'):
             fp = os.path.join(OUT, name)
             if os.path.exists(fp):
@@ -384,6 +404,15 @@ def main():
     write(os.path.join(OUT, 'landing.html'), build_landing())
     write(os.path.join(OUT, 'favicon.svg'), FAVICON)
     write(os.path.join(OUT, 'favicon.svg'), FAVICON)
+
+    # 文档页：tools/build_docs.py 从 README.md 生成 -> docs-site/index.html
+    docs_src = os.path.join(BASE, 'docs-site', 'index.html')
+    if os.path.exists(docs_src):
+        os.makedirs(os.path.join(OUT, 'docs'), exist_ok=True)
+        shutil.copyfile(docs_src, os.path.join(OUT, 'docs', 'index.html'))
+        print('  docs       ok')
+    else:
+        print('  docs       缺失（先跑 python tools/build_docs.py）')
 
     pkg = {
         'name': 'fullstack-practice-site',

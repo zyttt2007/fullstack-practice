@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>全栈应用开发 · 三个可交互项目</title>
+<meta name="description" content="按「数据库设计 → PRD → 后端 → 前端」完成的三个全栈项目：青苔笔记、灶台问答、一枚手作，已部署到公网，可真实注册登录、发文、提问、下单。" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%233f6b4d'/%3E%3Ctext x='50' y='68' font-size='52' font-family='Georgia,serif' fill='%23faf8f3' text-anchor='middle'%3E%E5%85%A8%3C/text%3E%3C/svg%3E" />
+<style>
+  :root{
+    --paper:#faf8f3;
+    --paper-2:#f3efe6;
+    --ink:#1b1a17;
+    --ink-2:#3a372f;
+    --muted:#6f6a5e;
+    --line:#e3ddcf;
+    --line-strong:#d2c9b6;
+    --moss:#3f6b4d;
+    --moss-soft:#eef3ea;
+    --clay:#b4653c;
+    --card:#fffdf8;
+    --serif:"Source Han Serif SC","Noto Serif SC","Songti SC",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    --mono:"JetBrains Mono","Cascadia Code",Consolas,"SFMono-Regular",Menlo,monospace;
+    --shadow:0 1px 2px rgba(27,26,23,.04), 0 12px 32px -18px rgba(27,26,23,.3);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:16px; line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit}
+  ::selection{background:rgba(63,107,77,.18)}
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:saturate(180%) blur(12px);
+    background:rgba(250,248,243,.82);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1180px; margin:0 auto; padding:0 28px; height:60px;
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+  }
+  .brand{display:flex; align-items:center; gap:10px; text-decoration:none; font-weight:600; letter-spacing:.01em}
+  .brand-mark{
+    width:26px; height:26px; border-radius:8px; background:var(--moss); color:#faf8f3;
+    display:grid; place-items:center; font-family:var(--serif); font-size:15px; line-height:1;
+  }
+  .brand-text{font-size:14.5px}
+  .brand-text em{font-style:normal; color:var(--line-strong); margin:0 2px}
+  .nav-links{display:flex; align-items:center; gap:22px; font-size:13.5px; color:var(--muted)}
+  .nav-links a{text-decoration:none; transition:color .18s}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-git{
+    color:var(--ink) !important; border:1px solid var(--line-strong);
+    padding:5px 12px; border-radius:999px; background:var(--card);
+  }
+  .nav-git:hover{border-color:var(--moss); color:var(--moss) !important}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative; overflow:hidden; border-bottom:1px solid var(--line)}
+  .hero::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      radial-gradient(760px 360px at 12% -10%, rgba(63,107,77,.14), transparent 62%),
+      radial-gradient(620px 320px at 92% 0%, rgba(180,101,60,.11), transparent 60%);
+  }
+  .hero-inner{position:relative; max-width:1180px; margin:0 auto; padding:76px 28px 64px}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; margin:0 0 22px;
+    font-size:12.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--moss);
+  }
+  .eyebrow::before{content:""; width:22px; height:1px; background:var(--moss); opacity:.55}
+  .hero h1{
+    font-family:var(--serif); font-weight:600; margin:0 0 22px;
+    font-size:clamp(34px,5.2vw,58px); line-height:1.18; letter-spacing:-.01em;
+  }
+  .hero h1 .hl{
+    background-image:linear-gradient(transparent 85%, rgba(63,107,77,.3) 85%, rgba(63,107,77,.3) 90%, transparent 90%);
+    background-repeat:no-repeat;
+    padding:0 .04em;
+  }
+  .lede{max-width:640px; margin:0 0 26px; color:var(--ink-2); font-size:16.5px}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:32px}
+  .chip{
+    font-family:var(--mono); font-size:11.5px; color:var(--muted);
+    border:1px solid var(--line); background:var(--card);
+    padding:4px 10px; border-radius:6px;
+  }
+  .cta{display:flex; flex-wrap:wrap; gap:12px; align-items:center}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+    font-size:14.5px; font-weight:600; padding:11px 20px; border-radius:10px;
+    border:1px solid transparent; transition:transform .18s, box-shadow .18s, background .18s, color .18s;
+  }
+  .btn.primary{background:var(--moss); color:#fdfbf6; box-shadow:0 8px 20px -12px rgba(63,107,77,.9)}
+  .btn.primary:hover{transform:translateY(-1px); box-shadow:0 14px 26px -14px rgba(63,107,77,.9)}
+  .btn.primary span{transition:transform .18s}
+  .btn.primary:hover span{transform:translateX(3px)}
+  .btn.ghost{border-color:var(--line-strong); color:var(--ink-2); background:transparent}
+  .btn.ghost:hover{border-color:var(--ink-2); color:var(--ink)}
+
+  /* ---------- projects ---------- */
+  .shell{max-width:1180px; margin:0 auto; padding:0 28px}
+  .projects{padding:64px 0 20px}
+  .sec-head{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:22px}
+  .sec-head h2{font-family:var(--serif); font-size:23px; font-weight:600; margin:0; letter-spacing:.01em}
+  .sec-note{font-size:12.5px; color:var(--muted)}
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  .card{
+    position:relative; display:flex; flex-direction:column; gap:8px; text-decoration:none;
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:22px 22px 18px; box-shadow:var(--shadow);
+    transition:transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .card:hover{transform:translateY(-3px); border-color:var(--line-strong); box-shadow:0 20px 40px -26px rgba(27,26,23,.5)}
+  .card-no{font-family:var(--serif); font-size:13px; color:var(--clay)}
+  .card h3{font-family:var(--serif); font-size:19px; font-weight:600; margin:0}
+  .card-sub{font-size:12.5px; color:var(--moss); margin:0; letter-spacing:.01em}
+  .card-desc{font-size:13.5px; color:var(--muted); margin:6px 0 0; line-height:1.7; flex:1}
+  .card-foot{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:14px; padding-top:13px; border-top:1px solid var(--line)}
+  .card-path{font-family:var(--mono); font-size:11.5px; color:var(--muted)}
+  .card-go{font-size:12.5px; font-weight:600; color:var(--moss)}
+  .card-go::after{content:" →"}
+
+  /* ---------- doc layout ---------- */
+  .doc{
+    display:grid; grid-template-columns:206px minmax(0,1fr); gap:58px;
+    padding:56px 28px 116px; align-items:start;
+  }
+  .toc{position:sticky; top:88px}
+  .toc-title{
+    font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 14px; padding-bottom:10px; border-bottom:1px solid var(--line);
+  }
+  .toc ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px}
+  .toc a{
+    display:block; text-decoration:none; font-size:13.2px; color:var(--muted);
+    padding:6px 0 6px 12px; border-left:2px solid transparent; line-height:1.5;
+    transition:color .18s, border-color .18s;
+  }
+  .toc a:hover{color:var(--ink)}
+  .toc a.active{color:var(--moss); border-left-color:var(--moss); font-weight:600}
+
+  .content{max-width:none; min-width:0}
+  .content > h2{
+    font-family:var(--serif); font-size:26px; font-weight:600; line-height:1.35;
+    margin:0 0 18px; padding-bottom:12px; border-bottom:1px solid var(--line);
+    scroll-margin-top:88px;
+  }
+  .content > h2:not(:first-child){margin-top:58px}
+  .content > h3{
+    font-family:var(--serif); font-size:18.5px; font-weight:600; margin:34px 0 12px;
+    scroll-margin-top:88px;
+  }
+  .content p{margin:0 0 16px; color:var(--ink-2)}
+  .content strong{color:var(--ink); font-weight:600}
+  .content ul,.content ol{margin:0 0 18px; padding-left:1.25em; color:var(--ink-2)}
+  .content li{margin:6px 0}
+  .content li::marker{color:var(--line-strong)}
+
+  .content a[href^="http"]{
+    color:var(--moss); text-decoration:none;
+    border-bottom:1px solid rgba(63,107,77,.35); word-break:break-all;
+  }
+  .content a[href^="http"]:hover{border-bottom-color:var(--moss)}
+
+  .content a.url-cta{
+    display:inline-flex; align-items:center; gap:8px; margin:2px 0 6px;
+    font-family:var(--mono); font-size:13px; line-height:1.5; word-break:break-all;
+    background:var(--card); border:1px solid var(--line); border-bottom:1px solid var(--line) !important;
+    border-radius:9px; padding:9px 14px; color:var(--moss); text-decoration:none;
+    box-shadow:var(--shadow); transition:border-color .18s, transform .18s;
+  }
+  .content a.url-cta::before{content:"↗"; font-size:12px; opacity:.7}
+  .content a.url-cta:hover{border-color:var(--moss) !important; transform:translateY(-1px)}
+
+  .content blockquote{
+    margin:20px 0; padding:14px 18px; background:var(--moss-soft);
+    border-left:3px solid var(--moss); border-radius:0 8px 8px 0;
+  }
+  .content blockquote p{margin:0; font-size:14px; color:var(--ink-2)}
+  .content blockquote strong{color:var(--moss)}
+
+  .content hr{border:0; border-top:1px solid var(--line); margin:40px 0}
+
+  /* code */
+  .content code{
+    font-family:var(--mono); font-size:.86em; background:var(--paper-2);
+    border:1px solid var(--line); border-radius:5px; padding:.12em .38em;
+    color:var(--clay); word-break:break-word;
+  }
+  .code-block{position:relative; margin:18px 0 24px}
+  .content pre{
+    margin:0; background:#f4f1e8; border:1px solid var(--line); border-left:3px solid var(--moss);
+    border-radius:10px; padding:16px 18px; overflow:auto;
+    font-size:13px; line-height:1.75; color:var(--ink-2);
+  }
+  .content pre code{
+    background:none; border:0; padding:0; color:inherit; font-size:13px; white-space:pre;
+  }
+  .copy-btn{
+    position:absolute; top:9px; right:9px; z-index:2;
+    font-family:var(--sans); font-size:11.5px; color:var(--muted);
+    background:rgba(255,253,248,.92); border:1px solid var(--line); border-radius:6px;
+    padding:3px 9px; cursor:pointer; opacity:0; transition:opacity .18s, color .18s, border-color .18s;
+  }
+  .code-block:hover .copy-btn,.copy-btn:focus-visible{opacity:1}
+  .copy-btn:hover{color:var(--moss); border-color:var(--moss)}
+  .copy-btn.done{color:var(--moss); border-color:var(--moss)}
+
+  /* tables */
+  .table-wrap{overflow-x:auto; margin:18px 0 26px; border:1px solid var(--line); border-radius:12px; background:var(--card)}
+  .content table{width:100%; border-collapse:collapse; font-size:13.5px; min-width:420px}
+  .content thead th{
+    text-align:left; font-weight:600; font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--muted); padding:11px 16px; background:var(--paper-2); border-bottom:1px solid var(--line);
+    white-space:nowrap;
+  }
+  .content tbody td{padding:11px 16px; border-bottom:1px solid var(--line); color:var(--ink-2); vertical-align:top}
+  .content tbody tr:last-child td{border-bottom:0}
+  .content tbody tr:hover td{background:rgba(63,107,77,.035)}
+  .content tbody td:first-child code{color:var(--moss)}
+
+  /* footer */
+  .foot{border-top:1px solid var(--line); background:var(--paper-2)}
+  .foot-inner{
+    max-width:1180px; margin:0 auto; padding:34px 28px;
+    display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+    font-size:13px; color:var(--muted);
+  }
+  .foot-links{display:flex; gap:20px; flex-wrap:wrap}
+  .foot-links a{text-decoration:none; color:var(--ink-2)}
+  .foot-links a:hover{color:var(--moss)}
+
+  @media (max-width:960px){
+    .cards{grid-template-columns:1fr}
+    .doc{grid-template-columns:1fr; gap:30px; padding-top:40px}
+    .toc{position:static; border:1px solid var(--line); border-radius:12px; background:var(--card); padding:16px 18px}
+    .toc ol{flex-direction:row; flex-wrap:wrap; gap:4px 14px}
+    .toc a{border-left:0; padding:3px 0; font-size:12.8px}
+    .toc a.active{border-left:0; text-decoration:underline; text-underline-offset:4px}
+    .nav-links{gap:14px}
+    .nav-links a:not(.nav-git){display:none}
+    .hero-inner{padding:52px 22px 46px}
+    .shell,.doc{padding-left:22px; padding-right:22px}
+  }
+  @media (max-width:520px){
+    .brand-text{font-size:13px}
+    .content > h2{font-size:22px}
+    .copy-btn{opacity:1}
+  }
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark">全</span>
+      <span class="brand-text">全栈应用开发<em>·</em>项目文档</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#projects">三个项目</a>
+      <a href="#doc">文档</a>
+      <a href="#s2">技术栈</a>
+      <a href="https://github.com/zyttt2007/fullstack-practice" class="nav-git" target="_blank" rel="noreferrer">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <p class="eyebrow">全栈应用开发 · 示例项目练习</p>
+    <h1>三个项目，<br /><span class="hl">点开就能用</span>。</h1>
+    <p class="lede">
+      按文档的顺序走了一遍：先设计数据库，再写 PRD，然后做后端，最后做前端。
+      不是截图，也不是静态展示页——注册、登录、发文章、点赞、提问、加购物车、下单、支付，全都能真的点。
+    </p>
+    <div class="chips">
+      <span class="chip">React 18 + TypeScript</span>
+      <span class="chip">Vite + Tailwind</span>
+      <span class="chip">Node.js + Express</span>
+      <span class="chip">MySQL 8 / SQLite</span>
+      <span class="chip">JWT + bcrypt</span>
+    </div>
+    <div class="cta">
+      <a class="btn primary" href="https://fullstack-projects.app.workbuddy.host/?sharecode=G66VMBWKQ5" target="_blank" rel="noreferrer">打开在线演示 <span>→</span></a>
+      <a class="btn ghost" href="https://github.com/zyttt2007/fullstack-practice" target="_blank" rel="noreferrer">查看源码</a>
+    </div>
+  </div>
+</section>
+
+<section class="projects" id="projects">
+  <div class="shell">
+    <div class="sec-head">
+      <h2>三个项目</h2>
+      <span class="sec-note">同一台服务器、同一套技术栈，三套互相独立的数据库</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://fullstack-projects.app.workbuddy.host/blog/?sharecode=G66VMBWKQ5" target="_blank" rel="noreferrer">
+        <span class="card-no">① 个人博客</span>
+        <h3>青苔笔记</h3>
+        <p class="card-sub">MossNote · 旧书 · 城市漫步 · 手冲咖啡</p>
+        <p class="card-desc">Markdown 写作与实时预览、分类与标签、点赞评论、草稿箱、按月归档、搜索。</p>
+        <span class="card-foot"><span class="card-path">/blog/</span><span class="card-go">打开</span></span>
+      </a>
+      <a class="card" href="https://fullstack-projects.app.workbuddy.host/community/?sharecode=G66VMBWKQ5" target="_blank" rel="noreferrer">
+        <span class="card-no">② 问答社区</span>
+        <h3>灶台问答</h3>
+        <p class="card-sub">HearthAsk · 新手下厨互助</p>
+        <p class="card-desc">提问扣 5 分、回答加 10 分、被采纳加 30 分，点赞去重、积分排行榜、多种排序。</p>
+        <span class="card-foot"><span class="card-path">/community/</span><span class="card-go">打开</span></span>
+      </a>
+      <a class="card" href="https://fullstack-projects.app.workbuddy.host/shop/?sharecode=G66VMBWKQ5" target="_blank" rel="noreferrer">
+        <span class="card-no">③ Mini 商城</span>
+        <h3>一枚手作</h3>
+        <p class="card-sub">HandmadeOne · 手作器物小店</p>
+        <p class="card-desc">购物车库存校验、地址管理、事务扣库存、价格快照、优惠券满减、模拟支付。</p>
+        <span class="card-foot"><span class="card-path">/shop/</span><span class="card-go">打开</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<main class="doc shell" id="doc">
+  <aside class="toc">
+    <p class="toc-title">目录</p>
+    {{TOC}}
+  </aside>
+  <article class="content">
+{{CONTENT}}
+  </article>
+</main>
+
+<footer class="foot">
+  <div class="foot-inner">
+    <span>全栈应用开发 · 示例项目练习　|　数据库设计 → PRD → 后端 → 前端</span>
+    <div class="foot-links">
+      <a href="https://fullstack-projects.app.workbuddy.host/?sharecode=G66VMBWKQ5" target="_blank" rel="noreferrer">在线演示</a>
+      <a href="https://github.com/zyttt2007/fullstack-practice" target="_blank" rel="noreferrer">GitHub 仓库</a>
+      <a href="#top">回到顶部 ↑</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // 代码块：包一层 + 复制按钮
+  document.querySelectorAll('.content pre').forEach(function (pre) {
+    var wrap = document.createElement('div');
+    wrap.className = 'code-block';
+    pre.parentNode.insertBefore(wrap, pre);
+    wrap.appendChild(pre);
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = '复制';
+    btn.addEventListener('click', function () {
+      var text = pre.innerText;
+      var done = function () {
+        btn.textContent = '已复制';
+        btn.classList.add('done');
+        setTimeout(function () { btn.textContent = '复制'; btn.classList.remove('done'); }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { fallback(); });
+      } else { fallback(); }
+      function fallback() {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = '复制失败'; }
+        document.body.removeChild(ta);
+      }
+    });
+    wrap.appendChild(btn);
+  });
+
+  // 表格：横向滚动容器
+  document.querySelectorAll('.content table').forEach(function (t) {
+    if (t.parentNode.classList.contains('table-wrap')) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'table-wrap';
+    t.parentNode.insertBefore(wrap, t);
+    wrap.appendChild(t);
+  });
+
+  // 目录高亮
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+  var setActive = function (id) {
+    links.forEach(function (a) { a.classList.toggle('active', a.getAttribute('href') === '#' + id); });
+  };
+  if ('IntersectionObserver' in window && targets.filter(Boolean).length) {
+    var visible = new Map();
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { visible.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0); });
+      var best = null, bestRatio = 0;
+      visible.forEach(function (r, id) { if (r > bestRatio) { bestRatio = r; best = id; } });
+      if (best) setActive(best);
+    }, { rootMargin: '-84px 0px -62% 0px', threshold: [0, .2, .6, 1] });
+    targets.forEach(function (t) { if (t) io.observe(t); });
+    links.forEach(function (a) {
+      a.addEventListener('click', function () {
+        var id = a.getAttribute('href').slice(1);
+        setActive(id);
+      });
+    });
+  }
+</script>
+</body>
+</html>
