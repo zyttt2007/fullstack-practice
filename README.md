@@ -2,27 +2,27 @@
 
 三个完整的全栈项目，按文档流程（**设计数据库 → 写 PRD → 后端 → 前端**）完成，并且**已经部署到公网，可以直接点开使用**。
 
-## 在线演示（真实可交互，不是静态页面）
+## 在线演示（三个独立的网站，各自一条链接）
 
-**https://fullstack-projects.app.workbuddy.host/?sharecode=G66VMBWKQ5**
-
-- 一个链接进去是三个项目的入口页，点卡片进入对应的完整网站
-- 可以真正注册、登录、发文章、点赞、评论、提问、回答、加购物车、下单、支付
-- 演示账号密码统一 `123456`，也可以自己注册
+三个项目是**三个各自独立的网站**，没有合并的入口页，每个链接点开就是那个项目本身：
 
 | 项目 | 线上地址 | 主题 |
 | --- | --- | --- |
-| ① 个人博客系统 | `/blog/` | 青苔笔记 MossNote（旧书 · 城市漫步 · 手冲咖啡） |
-| ② 问答社区 | `/community/` | 灶台问答 HearthAsk（新手下厨互助） |
-| ③ Mini 在线商城 | `/shop/` | 一枚手作 HandmadeOne（手作器物小店） |
+| ① 个人博客系统 | <https://fullstack-projects.app.workbuddy.host/blog/?sharecode=G66VMBWKQ5> | 青苔笔记 MossNote（旧书 · 城市漫步 · 手冲咖啡） |
+| ② 问答社区 | <https://fullstack-projects.app.workbuddy.host/community/?sharecode=G66VMBWKQ5> | 灶台问答 HearthAsk（新手下厨互助） |
+| ③ Mini 在线商城 | <https://fullstack-projects.app.workbuddy.host/shop/?sharecode=G66VMBWKQ5> | 一枚手作 HandmadeOne（手作器物小店） |
 
-> 首次访问会带上 `?sharecode=...` 的访问口令，之后同一浏览器内直接点站内链接即可。
+- 每个链接进去直接就是该项目的首页，可以真正注册、登录、发文章、点赞、评论、提问、回答、加购物车、下单、支付
+- 演示账号密码统一 `123456`，也可以自己注册
+- 三个项目数据互不相通：各自的 SQLite 数据文件、各自的用户表
+
+> 链接里的 `?sharecode=...` 是访问口令，进站之后同一浏览器内站内跳转不用再带。
 
 ### 文档网页版
 
-同一站点下还挂着这份 README 的网页版：**`/docs/`**
-（<https://fullstack-projects.app.workbuddy.host/docs/?sharecode=G66VMBWKQ5>）
-首页底部「项目文档」入口也指向它。页面由 `tools/build_docs.py` 从本文件生成，改完 README 重新生成即可。
+仓库根目录这份 README 也做成了网页：**`/`**（也就是站点首页）
+（<https://fullstack-projects.app.workbuddy.host/?sharecode=G66VMBWKQ5>）
+页面由 `tools/build_docs.py` 从本文件生成，改完 README 重新生成即可。
 
 ## 技术栈
 

@@ -155,8 +155,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.disable('x-powered-by');
 
-// 首页：三个项目的入口
-app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
+// 首页：README 渲染成的文档页（三个项目各自独立，没有合并的入口页）
+app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'docs', 'index.html')));
 app.get('/favicon.svg', (_req, res) => res.sendFile(path.join(__dirname, 'favicon.svg')));
 
 // 文档页：README 渲染成的静态页面（由 tools/build_docs.py 生成）
@@ -401,7 +401,7 @@ def main():
           ROOT_SERVER.replace('__IMPORTS__', '\n'.join(imports))
                     .replace('__MOUNTS__', '\n'.join(mounts))
                     .replace('__BOOT__', '\n'.join(boots)))
-    write(os.path.join(OUT, 'landing.html'), build_landing())
+    # 首页不再生成集成入口页，直接由 docs/index.html 承担
     write(os.path.join(OUT, 'favicon.svg'), FAVICON)
     write(os.path.join(OUT, 'favicon.svg'), FAVICON)
 
