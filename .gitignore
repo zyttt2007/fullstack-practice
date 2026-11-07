@@ -1,0 +1,31 @@
+# 依赖
+node_modules/
+.pnpm-store/
+
+# 构建产物
+dist/
+build/
+*.tsbuildinfo
+
+# 运行时数据库（执行 npm run reset 自动重建，不入库）
+*.sqlite
+*.sqlite3
+*.db
+
+# 环境变量（含 JWT 密钥与数据库口令，仅提交 .env.example）
+.env
+.env.local
+.env.*.local
+
+# 日志与临时文件
+*.log
+npm-debug.log*
+_render/
+pdf_out/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python 缓存（仅用于本地生成 Word 提交说明的脚本）
+__pycache__/
+*.pyc

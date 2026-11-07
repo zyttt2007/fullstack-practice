@@ -1,0 +1,60 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-sand: #f5efe6;
+  --color-card: #fffdf9;
+  --color-ink: #2c211b;
+  --color-ink-soft: #8a7666;
+  --color-clay: #a25536;
+  --color-clay-deep: #83422a;
+  --color-clay-soft: #d9a587;
+  --color-line: #e8ddcc;
+  --color-olive: #5d6b46;
+  --font-serif: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'SimSun', serif;
+  --font-sans: 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', system-ui, sans-serif;
+}
+
+html { background: #f5efe6; }
+
+body {
+  font-family: var(--font-sans);
+  color: #2c211b;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-title {
+  font-family: var(--font-serif);
+  letter-spacing: 0.01em;
+}
+
+.grain {
+  background-image:
+    radial-gradient(rgba(162, 85, 54, 0.06) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.md-body {
+  font-size: 15.5px;
+  line-height: 1.9;
+  color: #453626;
+}
+.md-body h2 {
+  font-weight: 700;
+  color: #2c211b;
+  margin: 1.4em 0 0.6em;
+  padding-left: 0.7em;
+  border-left: 3px solid #a25536;
+}
+.md-body p { margin: 0.8em 0; }
+.md-body ul, .md-body ol { margin: 0.8em 0; padding-left: 1.4em; }
+.md-body ul { list-style: disc; }
+.md-body ol { list-style: decimal; }
+.md-body li { margin: 0.3em 0; }
+.md-body blockquote {
+  margin: 1em 0;
+  padding: 0.7em 1.1em;
+  background: #f3eadd;
+  border-left: 3px solid #d9a587;
+  color: #6b5a48;
+  border-radius: 0 8px 8px 0;
+}

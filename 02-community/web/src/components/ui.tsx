@@ -1,0 +1,96 @@
+import type { ReactNode } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { gradientBg, gradientParts, isUrl } from '../lib/visual';
+
+export function Avatar({
+  token,
+  name = '',
+  size = 36,
+  className = '',
+}: {
+  token?: string;
+  name?: string;
+  size?: number;
+  className?: string;
+}) {
+  const g = gradientParts(token);
+  const glyph = g?.glyph || name.slice(0, 1) || '·';
+  return isUrl(token) ? (
+    <img src={token} alt={name} className={`rounded-full object-cover ${className}`} style={{ width: size, height: size }} />
+  ) : (
+    <span
+      className={`inline-flex items-center justify-center rounded-full font-title text-white shrink-0 ${className}`}
+      style={{ width: size, height: size, background: gradientBg(g?.hue ?? 24), fontSize: size * 0.45 }}
+    >
+      {glyph}
+    </span>
+  );
+}
+
+export function Tag({ children, active, onClick }: { children: ReactNode; active?: boolean; onClick?: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-2.5 py-1 rounded-full text-xs border transition ${
+        active ? 'bg-fire text-white border-fire' : 'bg-cream text-ink-soft border-line hover:border-fire-soft'
+      }`}
+    >
+      #{children}
+    </button>
+  );
+}
+
+export function Loading({ text = '载入中…' }: { text?: string }) {
+  return <div className="py-20 text-center text-ink-soft text-sm">{text}</div>;
+}
+
+export function Empty({ text = '这里还什么都没有' }: { text?: string }) {
+  return (
+    <div className="py-20 text-center">
+      <div className="font-title text-5xl text-line mb-3">灶</div>
+      <p className="text-sm text-ink-soft">{text}</p>
+    </div>
+  );
+}
+
+export function Pagination({
+  page,
+  pageSize,
+  total,
+  onChange,
+}: {
+  page: number;
+  pageSize: number;
+  total: number;
+  onChange: (p: number) => void;
+}) {
+  const pages = Math.max(1, Math.ceil(total / pageSize));
+  if (pages <= 1) return null;
+  return (
+    <div className="flex items-center justify-center gap-2 mt-10">
+      <button disabled={page <= 1} onClick={() => onChange(page - 1)} className="px-3 py-1.5 text-sm border border-line rounded-md disabled:opacity-40 hover:bg-cream">
+        上一页
+      </button>
+      {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
+        <button
+          key={p}
+          onClick={() => onChange(p)}
+          className={`w-9 h-9 text-sm rounded-md border ${p === page ? 'bg-fire text-white border-fire' : 'border-line hover:bg-cream'}`}
+        >
+          {p}
+        </button>
+      ))}
+      <button disabled={page >= pages} onClick={() => onChange(page + 1)} className="px-3 py-1.5 text-sm border border-line rounded-md disabled:opacity-40 hover:bg-cream">
+        下一页
+      </button>
+    </div>
+  );
+}
+
+export function ProtectedRoute({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return <Loading />;
+  if (!user) return <Navigate to="/login" replace />;
+  return <>{children}</>;
+}
