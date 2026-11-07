@@ -2,11 +2,17 @@ import axios from 'axios';
 
 const TOKEN_KEY = 'handmadeone_token';
 
-const api = axios.create({ baseURL: '/api' });
+const api = axios.create({ baseURL: `${import.meta.env.BASE_URL}api` });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem(TOKEN_KEY);
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    // 同时放在头与查询参数里：部分托管环境的代理会覆盖 Authorization 头，
+    // 后端按 X-Access-Token → token 参数 → Authorization 的顺序取值
+    config.headers.Authorization = `Bearer ${token}`;
+    config.headers['X-Access-Token'] = token;
+    config.params = { ...(config.params || {}), token };
+  }
   return config;
 });
 

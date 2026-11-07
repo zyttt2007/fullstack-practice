@@ -26,6 +26,9 @@ pdf_out/
 Thumbs.db
 desktop.ini
 
-# Python 缓存（仅用于本地生成 Word 提交说明的脚本）
+# Python 缓存
 __pycache__/
 *.pyc
+
+# 部署产物（由 build_deploy.py 生成，可随时重建）
+deploy/

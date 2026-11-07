@@ -18,8 +18,11 @@ export function publicUser(row) {
 
 /** 必须登录；解析出的 { id, username } 挂在 req.user */
 export function requireAuth(req, res, next) {
+  // 取 token 的顺序：自定义头 → 查询参数 → Authorization
+  // （部分托管环境的反向代理会用平台凭据覆盖 Authorization，所以前两种更可靠）
+  const custom = req.headers['x-access-token'];
   const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  const token = custom || req.query.token || (header.startsWith('Bearer ') ? header.slice(7) : null);
   if (!token) return res.status(401).json({ error: { message: '请先登录' } });
   try {
     req.user = jwt.verify(token, SECRET());
@@ -31,8 +34,11 @@ export function requireAuth(req, res, next) {
 
 /** 可选登录：登录了就带上 req.user，没登录也放行（用于「是否已点赞」这类判断） */
 export function optionalAuth(req, _res, next) {
+  // 取 token 的顺序：自定义头 → 查询参数 → Authorization
+  // （部分托管环境的反向代理会用平台凭据覆盖 Authorization，所以前两种更可靠）
+  const custom = req.headers['x-access-token'];
   const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  const token = custom || req.query.token || (header.startsWith('Bearer ') ? header.slice(7) : null);
   if (token) {
     try {
       req.user = jwt.verify(token, SECRET());
